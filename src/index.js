@@ -61,6 +61,11 @@ newForm.addEventListener('submit', (e) => {
 editForm = document.getElementById('edit-ramen')
 editForm.addEventListener('submit', (e) => {
     e.preventDefault()
+    const newRating = document.getElementById('edit-rating').value
+    const newComment = document.getElementById('edit-comment').value
+    let update = {}
+    if (newRating !== "") update.rating = newRating;
+    if (newComment !== "") update.comment = newComment;
     fetch(`http://localhost:3000/ramens/${currID}`, {
         method: 'PATCH',
         mode: 'cors',
@@ -70,10 +75,7 @@ editForm.addEventListener('submit', (e) => {
             'Content-Type': 'application/json'
         },
         redirect: 'follow', // manual, *follow, error
-        body: JSON.stringify({
-            "rating": document.getElementById('edit-rating').value,
-            "comment": document.getElementById('edit-comment').value
-        })
+        body: JSON.stringify(update)
     }).then(() => {
         renderRamen()
         displayRamen(currID)
