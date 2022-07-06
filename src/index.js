@@ -1,8 +1,6 @@
 let nextID = 0;
 let currID = 0;
 
-
-
 const displayRamen = (ID) => {
     currID = ID
     const viewing = document.getElementById('ramen-detail')
@@ -96,14 +94,17 @@ deleteForm.addEventListener('submit', (e) => {
     }).catch((error) => console.log(error))
 })
 
+const renderAll = () => {
+    fetch('http://localhost:3000/ramens')
+        .then(res => res.json())
+        .then((data) => {
+            nextID = data.length
+            if (data.length > 0) {
+                currID = data[0].id
+                renderRamen()
+                displayRamen(currID)
+            }
+        })
+}
 
-fetch('http://localhost:3000/ramens')
-    .then(res => res.json())
-    .then((data) => {
-        nextID = data.length
-        if (data.length > 0) {
-            currID = data[0].id
-            renderRamen()
-            displayRamen(currID)
-        }
-    })
+renderAll();
