@@ -100,7 +100,7 @@ const renderAll = () => {
     fetch('http://localhost:3000/ramens')
         .then(res => res.json())
         .then((data) => {
-            nextID = data.length
+            nextID = data[data.length-1].id + 1
             if (data.length > 0) {
                 currID = data[0].id
                 renderRamen()
