@@ -1,4 +1,5 @@
 let nextID = 0;
+let currID = 0;
 
 fetch('http://localhost:3000/ramens')
     .then(res => res.json())
@@ -7,6 +8,7 @@ fetch('http://localhost:3000/ramens')
     })
 
 const displayRamen = (ind) => {
+    currID = ind+1
     const viewing = document.getElementById('ramen-detail')
     fetch(`http://localhost:3000/ramens/${ind+1}`)
         .then(res => res.json())
@@ -36,8 +38,8 @@ const renderRamen = () => {
     })
 }
 
-form = document.getElementById('new-ramen')
-form.addEventListener('submit', (e) => {
+newForm = document.getElementById('new-ramen')
+newForm.addEventListener('submit', (e) => {
     e.preventDefault()
     fetch('http://localhost:3000/ramens', {
         method: 'POST', 
@@ -56,10 +58,33 @@ form.addEventListener('submit', (e) => {
             "rating": document.getElementById('new-rating').value,
             "comment": document.getElementById('new-comment').value
         })
+    }).then(() => {
+        renderRamen()
     }).catch((error) => console.log(error))
-    renderRamen()
+    
 })
 
-
+editForm = document.getElementById('edit-ramen')
+editForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+    fetch(`http://localhost:3000/ramens/${currID}`, {
+        method: 'PATCH',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow', // manual, *follow, error
+        body: JSON.stringify({
+            "rating": document.getElementById('edit-rating').value,
+            "comment": document.getElementById('edit-comment').value
+        })
+    }).then(() => {
+        renderRamen()
+        displayRamen(currID - 1)
+    }).catch((error) => console.log(error))
+})
 
 renderRamen()
+displayRamen(0)
