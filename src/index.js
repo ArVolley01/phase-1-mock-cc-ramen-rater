@@ -1,16 +1,12 @@
 let nextID = 0;
 let currID = 0;
 
-fetch('http://localhost:3000/ramens')
-    .then(res => res.json())
-    .then((data) => {
-        nextID = data.length
-    })
 
-const displayRamen = (ind) => {
-    currID = ind+1
+
+const displayRamen = (ID) => {
+    currID = ID
     const viewing = document.getElementById('ramen-detail')
-    fetch(`http://localhost:3000/ramens/${ind+1}`)
+    fetch(`http://localhost:3000/ramens/${ID}`)
         .then(res => res.json())
         .then((data) => {
             viewing.getElementsByClassName('detail-image')[0].src = data.image
@@ -27,11 +23,11 @@ const renderRamen = () => {
     .then((data) => {
         const menu = document.getElementById('ramen-menu')
         menu.innerHTML = ''
-        data.forEach((element, index) => {
+        data.forEach((element) => {
             const im = document.createElement('img')
             im.src = element.image
             im.addEventListener('click', () => {
-                displayRamen(index)
+                displayRamen(element.id)
             })
             menu.append(im)
         });
@@ -82,9 +78,32 @@ editForm.addEventListener('submit', (e) => {
         })
     }).then(() => {
         renderRamen()
-        displayRamen(currID - 1)
+        displayRamen(currID)
     }).catch((error) => console.log(error))
 })
 
-renderRamen()
-displayRamen(0)
+deleteForm = document.getElementById('delete-form')
+deleteForm.addEventListener('submit', (e) => {
+    e.preventDefault()
+    fetch(`http://localhost:3000/ramens/${currID}`, {
+        method: "DELETE",
+        headers: {
+            'Content-type': 'application/json'
+        }
+    })
+    .then(() => {
+        renderRamen()
+    }).catch((error) => console.log(error))
+})
+
+
+fetch('http://localhost:3000/ramens')
+    .then(res => res.json())
+    .then((data) => {
+        nextID = data.length
+        if (data.length > 0) {
+            currID = data[0].id
+            renderRamen()
+            displayRamen(currID)
+        }
+    })
